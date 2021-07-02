@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: timesheet-server
+
+server:
+  port: 9003
