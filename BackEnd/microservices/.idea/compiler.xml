@@ -9,10 +9,10 @@
         <outputRelativeToContentRoot value="true" />
         <module name="summary" />
         <module name="timesheet" />
-        <module name="gateway" />
         <module name="service-discovery" />
-        <module name="contact" />
+        <module name="gateway" />
         <module name="auth-server" />
+        <module name="contact" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
