@@ -1,9 +1,9 @@
 server:
-  port: 9000
+  port: 9001
 
 spring:
   application:
-    name: timesheet-service
+    name: summary-service
 
 eureka:
   client:

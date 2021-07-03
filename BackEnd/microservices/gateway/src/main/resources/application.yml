@@ -12,11 +12,12 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: movie-store
-          uri: lb://movie-store
+        - id: timesheet-service
+          uri: lb://timesheet-service
           predicates:
-            - Path=/movie/**
-        - id: book-store
-          uri: lb://book-store
+            - Path=/testTimeSheet/**
+
+        - id: summary-service
+          uri: lb://summary-service
           predicates:
-            - Path=/book/**
+            - Path=/testSummary/**
