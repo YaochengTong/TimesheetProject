@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,8 +21,12 @@ public class PersonalContact {
     @Id
     private String id;
 
+    private String userId;
     private String number;
     private String email;
-    private String address_id;
-    private String emergencyContact_id;
+    private String addressId;
+
+
+
+    private String emergencyContactId;
 }

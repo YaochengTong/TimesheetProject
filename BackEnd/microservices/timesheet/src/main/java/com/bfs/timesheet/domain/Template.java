@@ -13,6 +13,7 @@ import java.util.List;
 public class Template {
     @Id
     private String id;
+
     private String userId;
     private List<Day> days;
 

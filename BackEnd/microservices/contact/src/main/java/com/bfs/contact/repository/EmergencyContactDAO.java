@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface EmergencyContactDAO extends MongoRepository<EmergencyContact,String> {
 
-    EmergencyContact findEmergencyContactByPersonId(String personId);
-
+    //this parameter name must be the same as field we just define in domain.
+    EmergencyContact findEmergencyContactByPersonalContactId(String personalContactId);
     EmergencyContact findEmergencyContactByName1(String name1);
 }

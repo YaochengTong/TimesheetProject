@@ -16,6 +16,7 @@ public class Address {
     @Id
     private String id;
 
+    private String personalContactId;
     private String homeAddress;
 
 }

@@ -13,6 +13,6 @@ public class PTO {
     private String id;
     private String userId;
     private Integer year;
-    private Integer floatingCount;
-    private Integer vacationCount;
+    private Integer floatingCount;//total floating days
+    private Integer vacationCount;//total vacation days
 }

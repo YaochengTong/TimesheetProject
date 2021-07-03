@@ -15,6 +15,7 @@ public class Timesheet {
     private String id;
 
     private String userId;
+
     private String weekEnding;
     private Integer totalBillingHour;
     private Integer totalCompensatedHour;
@@ -22,6 +23,12 @@ public class Timesheet {
     private String approvalStatus;
     private String comment;
 
+
+
     private List<Day> days;
+//    private String templateId;
+
+    private Integer floatingLeft;
+    private Integer holidayLeft;
 
 }
