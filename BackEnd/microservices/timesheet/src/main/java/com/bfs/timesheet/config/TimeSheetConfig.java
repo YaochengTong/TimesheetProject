@@ -29,25 +29,25 @@ public class TimeSheetConfig {
     CommandLineRunner commandLineRunner(TimesheetDAO timesheetDAO) {
         return strings -> {
             timesheetDAO.deleteAll();
-            List<Day> days = initializeDayList1("1","12/26/2020", 2020);
-            List<Day> days2 = initializeDayList1("1","12/19/2020", 2020);
-            List<Day> days3 = initializeDayList1("1","12/12/2020", 2020);
-            List<Day> days4 = initializeDayList1("1","12/5/2020", 2020);
-            List<Day> days5 = initializeDayList1("1","11/28/2020", 2020);
-            List<Day> days6 = initializeDayList1("1","11/21/2020", 2020);
+            List<Day> days = initializeDayList1("1","2020-12-26", 2020);
+            List<Day> days2 = initializeDayList1("1","2020-12-19", 2020);
+            List<Day> days3 = initializeDayList1("1","2020-12-12", 2020);
+            List<Day> days4 = initializeDayList1("1","2020-12-5", 2020);
+            List<Day> days5 = initializeDayList1("1","2020-11-28", 2020);
+            List<Day> days6 = initializeDayList1("1","2020-11-21", 2020);
 
             //Initialize timesheet summary for user 1
-            timesheetDAO.save(new Timesheet("1", "1", "12/26/2020", 32, 40, "Not Started", "N/A", "", days,5,2));
-            timesheetDAO.save(new Timesheet("2", "1", "12/19/2020", 40, 40, "Incomplete", "Not approved", "", days2,2,3));
-            timesheetDAO.save(new Timesheet("3", "1", "12/12/2020", 40, 40, "Not Started", "N/A", "", days3,6,6));
-            timesheetDAO.save(new Timesheet("4", "1", "12/5/2020", 40, 40, "Completed", "Approved", "", days4,6,6));
-            timesheetDAO.save(new Timesheet("5", "1", "11/28/2020", 40, 40, "Completed", "Approved", "", days5,6,6));
-            timesheetDAO.save(new Timesheet("6", "1", "11/21/2020", 40, 40, "Completed", "Approved", "", days6,6,6));
+            timesheetDAO.save(new Timesheet("1", "1", "2020-12-26", 32, 40, "Not Started", "N/A", "", days,5,2));
+            timesheetDAO.save(new Timesheet("2", "1", "2020-12-19", 40, 40, "Incomplete", "Not approved", "", days2,2,3));
+            timesheetDAO.save(new Timesheet("3", "1", "2020-12-12", 40, 40, "Not Started", "N/A", "", days3,6,6));
+            timesheetDAO.save(new Timesheet("4", "1", "2020-12-5", 40, 40, "Completed", "Approved", "", days4,6,6));
+            timesheetDAO.save(new Timesheet("5", "1", "2020-11-28", 40, 40, "Completed", "Approved", "", days5,6,6));
+            timesheetDAO.save(new Timesheet("6", "1", "2020-11-21", 40, 40, "Completed", "Approved", "", days6,6,6));
         };
     }
 
     public List<Day> initializeDayList1(String userId, String weekEnding, Integer year) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date weekEndingDate = sdf.parse(weekEnding);
         Calendar ComparedDate = Calendar.getInstance();
 
@@ -56,7 +56,7 @@ public class TimeSheetConfig {
 
         holidaysDAO.deleteAll();
         Holidays holidaysTmp = new Holidays();
-        List<String> s = Arrays.asList("12/21/2020","12/25/2020");
+        List<String> s = Arrays.asList("2020-12-21","2020-12-25");
         holidaysTmp.setYear(2020);
         holidaysTmp.setHoliday(s);
         holidaysDAO.save(holidaysTmp);
