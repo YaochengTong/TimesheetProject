@@ -1,9 +1,14 @@
 import React from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Alert, Card } from 'antd';
+import { Alert, Calendar, Card } from 'antd';
 import { useIntl } from 'umi';
 
 export default (): React.ReactNode => {
+  function onPanelChange(value: { format: (arg0: string) => any }, mode: any) {
+    // eslint-disable-next-line no-console
+    console.log(value.format('YYYY-MM-DD'), mode);
+  }
+
   const intl = useIntl();
   return (
     <PageContainer>
@@ -22,6 +27,7 @@ export default (): React.ReactNode => {
           }}
         />
       </Card>
+      <Calendar onPanelChange={onPanelChange} />
     </PageContainer>
   );
 };
