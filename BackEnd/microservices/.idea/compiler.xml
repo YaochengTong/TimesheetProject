@@ -16,9 +16,9 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="8">
-      <module name="auth-server" target="8" />
-      <module name="contact" target="8" />
-      <module name="gateway" target="8" />
+      <module name="auth-server" target="1.6" />
+      <module name="contact" target="1.8" />
+      <module name="gateway" target="1.6" />
       <module name="service-discovery" target="1.8" />
       <module name="summary" target="1.8" />
       <module name="timesheet" target="1.8" />

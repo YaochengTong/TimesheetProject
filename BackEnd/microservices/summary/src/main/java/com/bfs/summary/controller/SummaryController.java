@@ -12,24 +12,23 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/testSummary")
-public class TestController {
+@RequestMapping("/Summary")
+public class SummaryController {
 
     @Autowired
     private SummaryRepository summaryRepository;
 
-    @GetMapping("/test")
-    public ResponseEntity test1(){
-        return ResponseEntity.ok("test from summary");
-    }
-
-    @GetMapping("/testAllSummary")
+    @GetMapping("/")
     @ResponseBody
-    public List<Timesheet> test2() {
+    public List<Timesheet> getAllSummary() {
 
         List<Timesheet> list = summaryRepository.findAll();
 
         return list;
     }
 
+    @PostMapping("/")
+    public ResponseEntity addSummary() {
+        ./dsf'jEWOJ 0[ '
+    }
 }

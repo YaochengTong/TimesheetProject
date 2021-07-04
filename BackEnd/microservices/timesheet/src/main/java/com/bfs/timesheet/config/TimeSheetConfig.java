@@ -1,4 +1,5 @@
 package com.bfs.timesheet.config;
+
 import com.bfs.timesheet.domain.Day;
 import com.bfs.timesheet.domain.Holidays;
 import com.bfs.timesheet.domain.Timesheet;
@@ -55,6 +56,7 @@ public class TimeSheetConfig {
 
 
         holidaysDAO.deleteAll();
+
         Holidays holidaysTmp = new Holidays();
         List<String> s = Arrays.asList("2020-12-21","2020-12-25");
         holidaysTmp.setYear(2020);
