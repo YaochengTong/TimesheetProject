@@ -25,7 +25,8 @@ public class Timesheet {
 
 
 
-    private List<Day> days;
+    private List<Day> days;// template better than days?
+    //B2, B3, B3, B5 can be as a template
 //    private String templateId;
 
     private Integer floatingLeft;

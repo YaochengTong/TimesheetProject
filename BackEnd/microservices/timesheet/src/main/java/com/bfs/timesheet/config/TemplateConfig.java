@@ -27,7 +27,7 @@ public class TemplateConfig {
         List<Day> dayList1 = new ArrayList<>();
         for(int i = 0; i < 7; i++){
             if (i > 0 && i < 6){
-                Day weekday = new Day("10:00","18:00",8.0,false,false,false);
+                Day weekday = new Day("9:00","17:00",8.0,false,false,false);
                 dayList1.add(weekday);
             }
             else {
