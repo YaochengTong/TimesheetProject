@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Random;
 
 @RestController
-@CrossOrigin
+//@CrossOrigin
 @RequestMapping("/timeSheet")
 public class TimeSheetController {
 

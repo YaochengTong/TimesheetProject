@@ -17,7 +17,7 @@ public class AllSummaryController {
     @Autowired
     private SummaryRepository summaryRepository;
 
-    @GetMapping("/")
+    @GetMapping("/something")
     @ResponseBody
     public List<Timesheet> getAllSummary() {
 

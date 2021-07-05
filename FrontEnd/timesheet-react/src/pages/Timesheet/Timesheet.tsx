@@ -4,6 +4,7 @@ import { history } from 'umi';
 import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
 import ProForm, { ProFormSelect, ProFormText, ProFormUploadButton } from '@ant-design/pro-form';
+import { useEffect } from 'react';
 
 const waitTime = (time: number = 100) => {
   return new Promise((resolve) => {
@@ -262,13 +263,15 @@ function Timesheet() {
     // routing logic here
     history.push(`/timesheet/${val}`);
     setWeekEnding(val);
-    setDataSource(getDaysByWeekEnding(weekEnding));
-    setEditableRowKeys(getKeysByWeekEnding(weekEnding));
-    // eslint-disable-next-line no-console
-    console.log(weekEnding);
-    console.log(dataSource);
-    console.log(editableKeys);
+    setDataSource(getDaysByWeekEnding(val));
+    setEditableRowKeys(getKeysByWeekEnding(val));
+
   };
+
+  useEffect(() => {
+    console.log(dataSource)
+
+  },[weekEnding, dataSource, editableKeys]) 
 
   return (
     <>
@@ -297,6 +300,7 @@ function Timesheet() {
           };
         }}
       >
+
         <ProForm.Group>
           <ProFormSelect
             width="md"
@@ -317,7 +321,7 @@ function Timesheet() {
           />
         </ProForm.Group>
 
-        <ProForm.Group>
+        <ProForm.Group key = {weekEnding}>
           <EditableProTable<DataSourceType>
             headerTitle="Timesheet Hours Detail"
             columns={columns}

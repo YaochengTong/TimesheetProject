@@ -102,9 +102,7 @@ const data = [
   },
 ];
 
-
-const allSummaryURL = "http://localhost:8081/testSummary/testAllSummary"
-
+const userId = 1;
 class Summary extends Component {
 
   constructor(props: any) {
@@ -115,6 +113,9 @@ class Summary extends Component {
   }
   
   componentDidMount() {
+    
+    const allSummaryURL = `http://localhost:8081/timeSheet/summary?userId=${userId}`
+
     axios.get(allSummaryURL).then(data => {
       this.setState({data: data.data})
     })
