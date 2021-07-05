@@ -191,7 +191,7 @@ const data1 = [
   },
 ];
 
-const columns: ProColumns<DataSourceType>[] = [
+const columns: ProColumns[] = [
   {
     title: 'Week Day',
     dataIndex: 'day',
@@ -240,7 +240,7 @@ const columns: ProColumns<DataSourceType>[] = [
 function Timesheet() {
   const [data, setData] = useState(data1)
   const [weekEnding, setWeekEnding] = useState(data[0].weekEnding);
-  const [dataSource, setDataSource] = useState<DataSourceType[]>(() => data[0].days);
+  const [dataSource, setDataSource] = useState(() => data[0].days);
 
   // @ts-ignore
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>(() => {
@@ -269,6 +269,20 @@ function Timesheet() {
 
   };
 
+  const saveChangeHandler = () => {
+    const curWeek = weekEnding
+
+    const week = data.find((item) => item.weekEnding === curWeek);
+    if(week != undefined)
+    
+    week.days = dataSource
+    
+    axios.put("http://localhost:8081/timeSheet/update", week, {
+      headers: {"Access-Control-Allow-Origin": "*"}
+    }).then(data => console.log(data))
+    .catch(err => console.log(err))
+  }
+
   useEffect(() => {
     const userId = 1
 
@@ -276,13 +290,14 @@ function Timesheet() {
 
     axios.get(allSummaryURL).then(data => {
       setData(data.data)
+      console.log(data.data)
     })
   }, [])
 
   useEffect(() => {
     setWeekEndingOptions(data.map((item) => item.weekEnding))
   }, [data])
-  
+
   useEffect(() => {
     console.log(dataSource)
 
@@ -337,7 +352,7 @@ function Timesheet() {
         </ProForm.Group>
 
         <ProForm.Group key = {weekEnding}>
-          <EditableProTable<DataSourceType>
+          <EditableProTable
             headerTitle="Timesheet Hours Detail"
             columns={columns}
             rowKey="day"
@@ -348,9 +363,7 @@ function Timesheet() {
                 <Button
                   type="primary"
                   key="save"
-                  onClick={() => {
-                    console.log(dataSource);
-                  }}
+                  onClick={() => saveChangeHandler()}
                 >
                   Save
                 </Button>,

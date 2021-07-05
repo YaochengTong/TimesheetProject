@@ -16,7 +16,7 @@ spring:
           '[/**]':
             allowedOrigins: "*"
             allowedMethods: "*"
-            allowedHeaders: "authorization"
+            allowedHeaders: "*"
       routes:
         - id: timesheet-service
           uri: lb://timesheet-service
