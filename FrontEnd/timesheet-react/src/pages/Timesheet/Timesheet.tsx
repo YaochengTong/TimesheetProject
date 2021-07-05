@@ -5,6 +5,7 @@ import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
 import ProForm, { ProFormSelect, ProFormText, ProFormUploadButton } from '@ant-design/pro-form';
 import { useEffect } from 'react';
+import axios from 'axios';
 
 const waitTime = (time: number = 100) => {
   return new Promise((resolve) => {
@@ -25,7 +26,7 @@ type DataSourceType = {
   holiday?: boolean;
 };
 
-const data = [
+const data1 = [
   {
     id: '1',
     userId: '1',
@@ -237,7 +238,7 @@ const columns: ProColumns<DataSourceType>[] = [
 ];
 
 function Timesheet() {
-
+  const [data, setData] = useState(data1)
   const [weekEnding, setWeekEnding] = useState(data[0].weekEnding);
   const [dataSource, setDataSource] = useState<DataSourceType[]>(() => data[0].days);
 
@@ -268,6 +269,20 @@ function Timesheet() {
 
   };
 
+  useEffect(() => {
+    const userId = 1
+
+    const allSummaryURL = `http://localhost:8081/timeSheet/summary?userId=${userId}`
+
+    axios.get(allSummaryURL).then(data => {
+      setData(data.data)
+    })
+  }, [])
+
+  useEffect(() => {
+    setWeekEndingOptions(data.map((item) => item.weekEnding))
+  }, [data])
+  
   useEffect(() => {
     console.log(dataSource)
 
