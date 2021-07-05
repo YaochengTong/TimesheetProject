@@ -1,7 +1,9 @@
+import React, { useState } from 'react';
+import { Button, message } from 'antd';
+import { history } from 'umi';
+import type { ProColumns } from '@ant-design/pro-table';
+import { EditableProTable } from '@ant-design/pro-table';
 import ProForm, { ProFormSelect, ProFormText, ProFormUploadButton } from '@ant-design/pro-form';
-import { Component } from 'react';
-import { message, Space, Table } from 'antd';
-import DayOffStatus from '@/pages/Timesheet/components/DayOffStatus';
 
 const waitTime = (time: number = 100) => {
   return new Promise((resolve) => {
@@ -11,114 +13,265 @@ const waitTime = (time: number = 100) => {
   });
 };
 
-const columns = [
+type DataSourceType = {
+  day?: React.Key;
+  date?: string;
+  startTime?: string;
+  endTime?: string;
+  totalHours?: number;
+  floating?: boolean;
+  vacation?: boolean;
+  holiday?: boolean;
+};
+
+const data = [
   {
-    title: 'Day',
+    id: '1',
+    userId: '1',
+    weekEnding: '2021-07-05',
+    totalBillingHour: 32,
+    totalCompensatedHour: 40,
+    submissionStatus: 'Not Started',
+    approvalStatus: 'N/A',
+    days: [
+      {
+        day: 'Monday',
+        date: '2021-06-28',
+        startTime: 'N/A',
+        endTime: 'N/A',
+        totalHours: 0,
+        floating: false,
+        vacation: false,
+        holiday: false,
+      },
+      {
+        day: 'Tuesday',
+        date: '2021-06-29',
+        startTime: 'N/A',
+        endTime: 'N/A',
+        totalHours: 0,
+        floating: false,
+        vacation: false,
+        holiday: false,
+      },
+      {
+        day: 'Wednesday',
+        date: '2021-06-30',
+        startTime: 'N/A',
+        endTime: 'N/A',
+        totalHours: 0,
+        floating: false,
+        vacation: false,
+        holiday: false,
+      },
+      {
+        day: 'Thursday',
+        date: '2021-07-01',
+        startTime: 'N/A',
+        endTime: 'N/A',
+        totalHours: 0,
+        floating: false,
+        vacation: false,
+        holiday: false,
+      },
+      {
+        day: 'Friday',
+        date: '2021-07-02',
+        startTime: 'N/A',
+        endTime: 'N/A',
+        totalHours: 0,
+        floating: false,
+        vacation: false,
+        holiday: false,
+      },
+      {
+        day: 'Saturday',
+        date: '2021-07-03',
+        startTime: 'N/A',
+        endTime: 'N/A',
+        totalHours: 0,
+        floating: false,
+        vacation: false,
+        holiday: false,
+      },
+      {
+        day: 'Sunday',
+        date: '2021-07-04',
+        startTime: 'N/A',
+        endTime: 'N/A',
+        totalHours: 0,
+        floating: false,
+        vacation: true,
+        holiday: false,
+      },
+    ],
+  },
+  {
+    id: '2',
+    userId: '2',
+    weekEnding: '2021-06-27',
+    totalBillingHour: 32,
+    totalCompensatedHour: 40,
+    submissionStatus: 'Not Started',
+    approvalStatus: 'N/A',
+    days: [
+      {
+        day: 'Monday',
+        date: '2021-06-21',
+        startTime: 'N/A',
+        endTime: 'N/A',
+        totalHours: 0,
+        floating: false,
+        vacation: false,
+        holiday: false,
+      },
+      {
+        day: 'Tuesday',
+        date: '2021-06-22',
+        startTime: 'N/A',
+        endTime: 'N/A',
+        totalHours: 0,
+        floating: false,
+        vacation: false,
+        holiday: false,
+      },
+      {
+        day: 'Wednesday',
+        date: '2021-06-23',
+        startTime: 'N/A',
+        endTime: 'N/A',
+        totalHours: 0,
+        floating: false,
+        vacation: false,
+        holiday: false,
+      },
+      {
+        day: 'Thursday',
+        date: '2021-06-24',
+        startTime: 'N/A',
+        endTime: 'N/A',
+        totalHours: 0,
+        floating: false,
+        vacation: false,
+        holiday: false,
+      },
+      {
+        day: 'Friday',
+        date: '2021-06-25',
+        startTime: 'N/A',
+        endTime: 'N/A',
+        totalHours: 0,
+        floating: false,
+        vacation: false,
+        holiday: false,
+      },
+      {
+        day: 'Saturday',
+        date: '2021-06-26',
+        startTime: 'N/A',
+        endTime: 'N/A',
+        totalHours: 0,
+        floating: false,
+        vacation: false,
+        holiday: false,
+      },
+      {
+        day: 'Sunday',
+        date: '2021-06-27',
+        startTime: 'N/A',
+        endTime: 'N/A',
+        totalHours: 0,
+        floating: false,
+        vacation: true,
+        holiday: false,
+      },
+    ],
+  },
+];
+
+const columns: ProColumns<DataSourceType>[] = [
+  {
+    title: 'Week Day',
     dataIndex: 'day',
-    key: 'day',
+    width: '15%',
+    editable: (text, record, index) => {
+      return index == null;
+    },
   },
   {
     title: 'Date',
     dataIndex: 'date',
-    key: 'date',
+    width: '15%',
   },
   {
     title: 'Starting Time',
     dataIndex: 'startTime',
-    key: 'startTime',
+    width: '15%',
   },
   {
     title: 'Ending Time',
-    dataIndex: 'endingTime',
-    key: 'endingTime',
+    dataIndex: 'endTime',
+    width: '15%',
   },
   {
-    title: 'Total Hours',
+    title: 'total Hours',
     dataIndex: 'totalHours',
-    key: 'totalHours',
+    width: '15%',
   },
   {
-    title: 'Floating Day',
-    dataIndex: 'floatingDay',
-    key: 'floatingDay',
-    render: (text: any, record: any) => (
-      <Space size="middle">
-        <DayOffStatus status={record.floatingDay} />
-      </Space>
-    ),
-  },
-  {
-    title: 'Holiday',
-    dataIndex: 'holiday',
-    key: 'holiday',
-    render: (text: any, record: any) => (
-      <Space size="middle">
-        <DayOffStatus status={record.holiday} />
-      </Space>
-    ),
+    title: 'Floating',
+    dataIndex: 'floating',
+    width: '10%',
   },
   {
     title: 'Vacation',
     dataIndex: 'vacation',
-    key: 'vacation',
-    render: (text: any, record: any) => (
-      <Space size="middle">
-        <DayOffStatus status={record.vacation} />
-      </Space>
-    ),
+    width: '10%',
+  },
+  {
+    title: 'Holiday',
+    dataIndex: 'holiday',
+    width: '10%',
   },
 ];
 
-const data = [
-  {
-    day: 0,
-    date: '1998-06-08',
-    startTime: 'N/A',
-    endingTime: 'N/A',
-    totalHours: 0,
-    floatingDay: false,
-    holiday: true,
-    vacation: false,
-  },
-  {
-    day: 1,
-    date: '1998-06-09',
-    startTime: 8,
-    endingTime: 12,
-    totalHours: 0,
-    floatingDay: true,
-    holiday: false,
-    vacation: false,
-  },
-];
+function Timesheet() {
 
-class Timesheet extends Component {
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      rows: [],
-      totalBillingHour: 40,
-      totalCompensatedHour: 29,
-    };
-  }
+  const [weekEnding, setWeekEnding] = useState(data[0].weekEnding);
+  const [dataSource, setDataSource] = useState<DataSourceType[]>(() => data[0].days);
 
-  private dateOptions = [
-    {
-      value: '2021-07-04',
-      label: '2021-07-04',
-    },
-    {
-      value: '2021-07-03',
-      label: '2021-07-03',
-    },
-    {
-      value: '2021-07-02',
-      label: '2021-07-02',
-    },
-  ];
+  // @ts-ignore
+  const [editableKeys, setEditableRowKeys] = useState<React.Key[]>(() => {
+    return dataSource.map((item) => item.day);
+  });
+  const [weekEndingOptions, setWeekEndingOptions] = useState(() =>
+    data.map((item) => item.weekEnding),
+  );
 
-  render() {
-    return (
+  const getDaysByWeekEnding = (val: string) => {
+    // @ts-ignore
+    return data.find((item) => item.weekEnding === val).days;
+  };
+
+  const getKeysByWeekEnding = (val: string) => {
+    const days = getDaysByWeekEnding(val);
+    return days.map((item) => item.day);
+  };
+
+  const weekEndingHandleChange = (val: string) => {
+    // routing logic here
+    history.push(`/timesheet/${val}`);
+    setWeekEnding(val);
+    setDataSource(getDaysByWeekEnding(weekEnding));
+    setEditableRowKeys(getKeysByWeekEnding(weekEnding));
+    // eslint-disable-next-line no-console
+    console.log(weekEnding);
+    console.log(dataSource);
+    console.log(editableKeys);
+  };
+
+  return (
+    <>
       <ProForm<{
         name: string;
         company?: string;
@@ -147,13 +300,17 @@ class Timesheet extends Component {
         <ProForm.Group>
           <ProFormSelect
             width="md"
-            options={this.dateOptions}
+            options={weekEndingOptions}
             name="weekEnding"
             label="Week Ending"
+            fieldProps={{
+              onChange: (val) => weekEndingHandleChange(val),
+            }}
+            placeholder="Select your week Ending"
           />
-          <ProFormText width="sm" name="totalBillingHour" disabled label="Total Billing Hours" />
+          <ProFormText width="md" name="totalBillingHour" disabled label="Total Billing Hours" />
           <ProFormText
-            width="sm"
+            width="md"
             name="totalCompensatedHour"
             disabled
             label="Total Compensated Hours"
@@ -161,7 +318,34 @@ class Timesheet extends Component {
         </ProForm.Group>
 
         <ProForm.Group>
-          <Table dataSource={data} columns={columns} pagination={false} />
+          <EditableProTable<DataSourceType>
+            headerTitle="Timesheet Hours Detail"
+            columns={columns}
+            rowKey="day"
+            value={dataSource}
+            onChange={setDataSource}
+            toolBarRender={() => {
+              return [
+                <Button
+                  type="primary"
+                  key="save"
+                  onClick={() => {
+                    console.log(dataSource);
+                  }}
+                >
+                  Save
+                </Button>,
+              ];
+            }}
+            editable={{
+              type: 'multiple',
+              editableKeys,
+              onValuesChange: (record, recordList) => {
+                setDataSource(recordList);
+              },
+              onChange: setEditableRowKeys,
+            }}
+          />
         </ProForm.Group>
 
         <ProForm.Group> &nbsp; </ProForm.Group>
@@ -192,8 +376,8 @@ class Timesheet extends Component {
           />
         </ProForm.Group>
       </ProForm>
-    );
-  }
+    </>
+  );
 }
 
 export default Timesheet;
