@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import { Space, Table } from 'antd';
 import Option from './components/option';
+import axios from 'axios';
 
 const columns = [
   {
@@ -11,8 +12,8 @@ const columns = [
   },
   {
     title: 'Total Hours',
-    dataIndex: 'totalHours',
-    key: 'totalHours',
+    dataIndex: 'totalBillingHour',
+    key: 'totalBillingHour',
   },
   {
     title: 'Submission Status',
@@ -101,11 +102,30 @@ const data = [
   },
 ];
 
+
+const allSummaryURL = "http://localhost:8081/testSummary/testAllSummary"
+
 class Summary extends Component {
+
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      data: []
+    }
+  }
+  
+  componentDidMount() {
+    axios.get(allSummaryURL).then(data => {
+      this.setState({data: data.data})
+    })
+
+  }
+
   render() {
     return (
       <div>
-        <Table columns={columns} dataSource={data} />
+        Hello
+        <Table columns={columns} dataSource={this.state.data} />
       </div>
     );
   }

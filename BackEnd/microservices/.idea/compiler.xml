@@ -11,8 +11,8 @@
         <module name="timesheet" />
         <module name="service-discovery" />
         <module name="gateway" />
-        <module name="auth-server" />
         <module name="contact" />
+        <module name="auth-server" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="8">

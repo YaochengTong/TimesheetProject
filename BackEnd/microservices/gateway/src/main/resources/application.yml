@@ -11,6 +11,12 @@ eureka:
 spring:
   cloud:
     gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "authorization"
       routes:
         - id: timesheet-service
           uri: lb://timesheet-service
