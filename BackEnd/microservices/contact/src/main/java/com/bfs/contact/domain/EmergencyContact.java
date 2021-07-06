@@ -18,7 +18,7 @@ public class EmergencyContact {
     private String id;
 
 
-    private String person_id;
+    private String personalContactId;
 
     private String name1;
     private String number1;

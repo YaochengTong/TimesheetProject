@@ -17,7 +17,7 @@ export default (): React.ReactNode => {
         <Alert
           message={intl.formatMessage({
             id: 'pages.welcome.alertMessage',
-            defaultMessage: 'Faster and stronger heavy-duty components have been released.',
+            defaultMessage: 'Welcome to Super3 Timesheet Project',
           })}
           type="success"
           showIcon

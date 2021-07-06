@@ -20,7 +20,7 @@ public class Day {
         this.holiday = holiday;
     }
 
-    String day;
+    String day; //we need to define it manually(Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday)
     String date;
     String startTime;
     String endTime;

@@ -11,12 +11,29 @@ eureka:
 spring:
   cloud:
     gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
       routes:
-        - id: movie-store
-          uri: lb://movie-store
+        - id: timesheet-service
+          uri: lb://timesheet-service
           predicates:
-            - Path=/movie/**
-        - id: book-store
-          uri: lb://book-store
+            - Path=/testTimeSheet/**
+
+        - id: timesheet-service
+          uri: lb://timesheet-service
           predicates:
-            - Path=/book/**
+            - Path=/timeSheet/**
+
+        - id: summary-service
+          uri: lb://summary-service
+          predicates:
+            - Path=/AllSummary/**
+
+        - id: summary-service
+          uri: lb://summary-service
+          predicates:
+            - Path=/testSummary/**

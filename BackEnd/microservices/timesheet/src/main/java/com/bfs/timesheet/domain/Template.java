@@ -13,6 +13,7 @@ import java.util.List;
 public class Template {
     @Id
     private String id;
+
     private String userId;
     private List<Day> days;
 
@@ -20,7 +21,7 @@ public class Template {
         this.days = new ArrayList<>();
         for(int i = 0; i < 7; i++){
             if (i > 0 && i < 6){
-                Day weekday = new Day("9:00","18:00",8.0,false,false,false);
+                Day weekday = new Day("9:00","17:00",8.0,false,false,false);
                 days.add(weekday);
             }
             else {

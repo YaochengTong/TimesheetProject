@@ -50,6 +50,10 @@
     icon: 'EditOutlined',
     component: './Timesheet/Timesheet',
   },
+  {
+    path: '/timesheet/:weekEnding',
+    component: './Timesheet/Timesheet',
+  },
   // profile
   {
     path: '/profile',
