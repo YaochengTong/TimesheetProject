@@ -184,4 +184,14 @@ public class TimeSheetController {
 
     }
 
+    @PatchMapping("/changeStatus")
+    public ResponseEntity<String> changeStatus(@RequestParam String userId, @RequestParam String weekEnding, @RequestParam String approvalStatus){
+        Timesheet timesheet = timesheetDAO.findByUserIdAndWeekEnding(userId, weekEnding);
+        timesheetDAO.delete(timesheet);
+        timesheet.setApprovalStatus(approvalStatus);
+        timesheetDAO.save(timesheet);
+        return new ResponseEntity<>("Successfully change Approval Status", HttpStatus.OK);
+
+    }
+
 }
