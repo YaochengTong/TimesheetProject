@@ -1,10 +1,36 @@
+import React, { Component } from 'react';
 import { Button } from 'antd';
+import { history } from 'umi';
 
-function Option(props: { submissionStatus: string }) {
-  if (props.submissionStatus === 'Completed') {
-    return <Button type="primary">View</Button>;
+class Option extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      submissionStatus: props.submissionStatus,
+      currentWeekEnding: props.currentWeekEnding,
+    };
   }
-  return <Button type="primary">Edit</Button>;
+
+  optionOnChange = () => {
+    // @ts-ignore
+    history.push(`/timesheet/${this.state.currentWeekEnding}`);
+  };
+
+  render() {
+    // @ts-ignore
+    if (this.state.submissionStatus === 'Completed') {
+      return (
+        <Button type="primary" onClick={this.optionOnChange}>
+          View
+        </Button>
+      );
+    }
+    return (
+      <Button type="primary" onClick={this.optionOnChange}>
+        Edit
+      </Button>
+    );
+  }
 }
 
 export default Option;

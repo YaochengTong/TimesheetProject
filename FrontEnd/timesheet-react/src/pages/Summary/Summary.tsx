@@ -32,7 +32,7 @@ const columns = [
     key: 'option',
     render: (text: any, record: any) => (
       <Space size="middle">
-        <Option submissionStatus={record.submissionStatus} />
+        <Option submissionStatus={record.submissionStatus} currentWeekEnding={record.weekEnding} />
       </Space>
     ),
   },
@@ -103,23 +103,21 @@ const data = [
 ];
 
 const userId = 1;
-class Summary extends Component {
 
+class Summary extends Component {
   constructor(props: any) {
     super(props);
     this.state = {
-      data: []
-    }
+      data: [],
+    };
   }
-  
+
   componentDidMount() {
-    
-    const allSummaryURL = `http://localhost:8081/timeSheet/summary?userId=${userId}`
+    const allSummaryURL = `http://localhost:8081/timeSheet/summary?userId=${userId}`;
 
-    axios.get(allSummaryURL).then(data => {
-      this.setState({data: data.data})
-    })
-
+    axios.get(allSummaryURL).then((item) => {
+      this.setState({ data: item.data });
+    });
   }
 
   render() {

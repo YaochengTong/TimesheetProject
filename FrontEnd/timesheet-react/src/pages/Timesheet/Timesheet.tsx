@@ -248,8 +248,15 @@ const dayColumns: ProColumns[] = [
 
 // Add timesheet configuration
 type DataItem = {
-  name: string;
-  state: string;
+  userId: string;
+  submissionStatus: string;
+  comment: string;
+  weekEnding: string;
+  totalBillingHour: string;
+  totalCompensatedHour: string;
+
+  approvalStatus: string;
+  days: [];
 };
 
 const schemaColumns: ProFormColumnsType<DataItem>[] = [
@@ -396,10 +403,10 @@ const schemaColumns: ProFormColumnsType<DataItem>[] = [
     dataIndex: 'approvalStatus',
     width: 'm',
     valueEnum: {
-      approvalTimesheet: {
+      Approved: {
         text: 'approvalTimesheet',
       },
-      unapprovedTimesheet: {
+      'Not approved': {
         text: 'unapprovedTimesheet',
       },
     },
@@ -477,13 +484,24 @@ function Timesheet() {
           trigger={<Button type="primary">Add new Timesheet Manually</Button>}
           layoutType="DrawerForm"
           onFinish={async (values) => {
+            // Manually add some parameter
+            // eslint-disable-next-line no-param-reassign
+            values.userId = '1';
+            // eslint-disable-next-line no-param-reassign
+            values.submissionStatus = 'Completed';
+            // eslint-disable-next-line no-param-reassign
+            values.comment = 'New Comment';
+            // eslint-disable-next-line no-console
             console.log(values);
+
             axios
-              .put('http://localhost:8081/timeSheet/update', values, {
-                headers: { 'Access-Control-Allow-Origin': '*' },
+              .post('http://localhost:8081/timeSheet/add', values, {
+                headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
               })
               .then((item) => console.log(item))
               .catch((err) => console.log(err));
+
+            weekEndingHandleChange(values.weekEnding);
           }}
           columns={schemaColumns}
           width={1300}
