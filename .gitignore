@@ -16,7 +16,7 @@ npm-debug.log*
 yarn-error.log
 
 /coverage
-BackEnd/TimesheetProject-BackEnd/.idea
+BackEnd/.idea
 yarn.lock
 package-lock.json
 *bak
