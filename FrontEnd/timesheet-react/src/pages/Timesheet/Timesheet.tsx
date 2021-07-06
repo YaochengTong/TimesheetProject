@@ -1,11 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, message } from 'antd';
 import { history } from 'umi';
 import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
-import ProForm, { ProFormSelect, ProFormText, ProFormUploadButton } from '@ant-design/pro-form';
-import { useEffect } from 'react';
+import ProForm, {
+  BetaSchemaForm,
+  ProFormColumnsType,
+  ProFormSelect,
+  ProFormText,
+  ProFormUploadButton,
+} from '@ant-design/pro-form';
 import axios from 'axios';
+import { PageContainer } from '@ant-design/pro-layout';
 
 const waitTime = (time: number = 100) => {
   return new Promise((resolve) => {
@@ -15,16 +21,16 @@ const waitTime = (time: number = 100) => {
   });
 };
 
-type DataSourceType = {
-  day?: React.Key;
-  date?: string;
-  startTime?: string;
-  endTime?: string;
-  totalHours?: number;
-  floating?: boolean;
-  vacation?: boolean;
-  holiday?: boolean;
-};
+// type DataSourceType = {
+//   day?: React.Key;
+//   date?: string;
+//   startTime?: string;
+//   endTime?: string;
+//   totalHours?: number;
+//   floating?: boolean;
+//   vacation?: boolean;
+//   holiday?: boolean;
+// };
 
 const data1 = [
   {
@@ -191,7 +197,7 @@ const data1 = [
   },
 ];
 
-const columns: ProColumns[] = [
+const dayColumns: ProColumns[] = [
   {
     title: 'Week Day',
     dataIndex: 'day',
@@ -204,6 +210,9 @@ const columns: ProColumns[] = [
     title: 'Date',
     dataIndex: 'date',
     width: '15%',
+    editable: (text, record, index) => {
+      return index == null;
+    },
   },
   {
     title: 'Starting Time',
@@ -237,8 +246,168 @@ const columns: ProColumns[] = [
   },
 ];
 
+// Add timesheet configuration
+type DataItem = {
+  name: string;
+  state: string;
+};
+
+const schemaColumns: ProFormColumnsType<DataItem>[] = [
+  {
+    title: 'weekEnding',
+    dataIndex: 'weekEnding',
+    initialValue: '2021-07-06',
+    formItemProps: {
+      rules: [
+        {
+          required: true,
+          message: 'Week Ending is necessary',
+        },
+      ],
+    },
+    width: 'm',
+  },
+  {
+    title: 'totalBillingHour',
+    dataIndex: 'totalBillingHour',
+    initialValue: '40',
+    width: 'm',
+  },
+  {
+    title: 'totalCompensatedHour',
+    dataIndex: 'totalCompensatedHour',
+    initialValue: '40',
+    width: 'm',
+  },
+  {
+    title: 'Days',
+    valueType: 'formList',
+    dataIndex: 'days',
+    columns: [
+      {
+        valueType: 'group',
+        columns: [
+          {
+            title: 'Week Day',
+            dataIndex: 'day',
+            valueType: 'select',
+            initialValue: 'Monday',
+            width: 'xs',
+            valueEnum: {
+              Monday: {
+                text: 'Monday',
+              },
+              Tuesday: {
+                text: 'Tuesday',
+              },
+              Wednesday: {
+                text: 'Wednesday',
+              },
+              Thursday: {
+                text: 'Thursday',
+              },
+              Friday: {
+                text: 'Friday',
+              },
+              Saturday: {
+                text: 'Saturday',
+              },
+              Sunday: {
+                text: 'Sunday',
+              },
+            },
+          },
+          {
+            title: 'Date',
+            dataIndex: 'date',
+            initialValue: '2021-07-06',
+            width: 's',
+          },
+          {
+            title: 'Starting Time',
+            dataIndex: 'startTime',
+            initialValue: '9',
+            width: 'xs',
+          },
+          {
+            title: 'Ending Time',
+            dataIndex: 'endTime',
+            initialValue: '5',
+            width: 'xs',
+          },
+          {
+            title: 'total Hours',
+            dataIndex: 'totalHours',
+            initialValue: '8',
+            width: 'xs',
+          },
+          {
+            title: 'Floating',
+            dataIndex: 'floating',
+            valueType: 'select',
+            width: 'xs',
+            initialValue: 'false',
+            valueEnum: {
+              true: {
+                text: 'true',
+              },
+              false: {
+                text: 'false',
+              },
+            },
+          },
+          {
+            title: 'Vacation',
+            dataIndex: 'vacation',
+            valueType: 'select',
+            width: 'xs',
+            initialValue: 'false',
+            valueEnum: {
+              true: {
+                text: 'true',
+              },
+              false: {
+                text: 'false',
+              },
+            },
+          },
+          {
+            title: 'Holiday',
+            dataIndex: 'holiday',
+            valueType: 'select',
+            initialValue: 'false',
+            width: 'xs',
+            valueEnum: {
+              true: {
+                text: 'true',
+              },
+              false: {
+                text: 'false',
+              },
+            },
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: 'approvalStatus',
+    valueType: 'select',
+    dataIndex: 'approvalStatus',
+    width: 'm',
+    valueEnum: {
+      approvalTimesheet: {
+        text: 'approvalTimesheet',
+      },
+      unapprovedTimesheet: {
+        text: 'unapprovedTimesheet',
+      },
+    },
+  },
+];
+
 function Timesheet() {
-  const [data, setData] = useState(data1)
+  const [data, setData] = useState(data1);
   const [weekEnding, setWeekEnding] = useState(data[0].weekEnding);
   const [dataSource, setDataSource] = useState(() => data[0].days);
 
@@ -266,45 +435,61 @@ function Timesheet() {
     setWeekEnding(val);
     setDataSource(getDaysByWeekEnding(val));
     setEditableRowKeys(getKeysByWeekEnding(val));
-
   };
 
   const saveChangeHandler = () => {
-    const curWeek = weekEnding
+    const curWeek = weekEnding;
 
     const week = data.find((item) => item.weekEnding === curWeek);
-    if(week != undefined)
-    
-    week.days = dataSource
-    
-    axios.put("http://localhost:8081/timeSheet/update", week, {
-      headers: {"Access-Control-Allow-Origin": "*"}
-    }).then(data => console.log(data))
-    .catch(err => console.log(err))
-  }
+    if (week !== undefined) week.days = dataSource;
+
+    axios
+      .put('http://localhost:8081/timeSheet/update', week, {
+        headers: { 'Access-Control-Allow-Origin': '*' },
+      })
+      .then((item) => console.log(item))
+      .catch((err) => console.log(err));
+  };
 
   useEffect(() => {
-    const userId = 1
+    const userId = 1;
 
-    const allSummaryURL = `http://localhost:8081/timeSheet/summary?userId=${userId}`
+    const allSummaryURL = `http://localhost:8081/timeSheet/summary?userId=${userId}`;
 
-    axios.get(allSummaryURL).then(data => {
-      setData(data.data)
-      console.log(data.data)
-    })
-  }, [])
-
-  useEffect(() => {
-    setWeekEndingOptions(data.map((item) => item.weekEnding))
-  }, [data])
+    axios.get(allSummaryURL).then((item) => {
+      setData(item.data);
+      console.log(item.data);
+    });
+  }, []);
 
   useEffect(() => {
-    console.log(dataSource)
+    setWeekEndingOptions(data.map((item) => item.weekEnding));
+  }, [data]);
 
-  },[weekEnding, dataSource, editableKeys]) 
+  useEffect(() => {
+    console.log(dataSource);
+  }, [weekEnding, dataSource, editableKeys]);
 
   return (
-    <>
+    <PageContainer title="Timesheet Info">
+      <div style={{ float: 'right' }}>
+        <BetaSchemaForm<DataItem>
+          trigger={<Button type="primary">Add new Timesheet Manually</Button>}
+          layoutType="DrawerForm"
+          onFinish={async (values) => {
+            console.log(values);
+            axios
+              .put('http://localhost:8081/timeSheet/update', values, {
+                headers: { 'Access-Control-Allow-Origin': '*' },
+              })
+              .then((item) => console.log(item))
+              .catch((err) => console.log(err));
+          }}
+          columns={schemaColumns}
+          width={1300}
+        />
+      </div>
+
       <ProForm<{
         name: string;
         company?: string;
@@ -325,12 +510,11 @@ function Timesheet() {
         request={async () => {
           await waitTime(100);
           return {
-            name: '蚂蚁设计有限公司',
+            name: 'Super3 Group',
             useMode: 'chapter',
           };
         }}
       >
-
         <ProForm.Group>
           <ProFormSelect
             width="md"
@@ -351,20 +535,17 @@ function Timesheet() {
           />
         </ProForm.Group>
 
-        <ProForm.Group key = {weekEnding}>
+        <ProForm.Group key={weekEnding}>
           <EditableProTable
             headerTitle="Timesheet Hours Detail"
-            columns={columns}
+            columns={dayColumns}
             rowKey="day"
             value={dataSource}
             onChange={setDataSource}
+            recordCreatorProps={false}
             toolBarRender={() => {
               return [
-                <Button
-                  type="primary"
-                  key="save"
-                  onClick={() => saveChangeHandler()}
-                >
+                <Button type="primary" key="save" onClick={() => saveChangeHandler()}>
                   Save
                 </Button>,
               ];
@@ -381,6 +562,7 @@ function Timesheet() {
         </ProForm.Group>
 
         <ProForm.Group> &nbsp; </ProForm.Group>
+
         <ProForm.Group>
           <ProFormSelect
             width="md"
@@ -408,7 +590,7 @@ function Timesheet() {
           />
         </ProForm.Group>
       </ProForm>
-    </>
+    </PageContainer>
   );
 }
 
