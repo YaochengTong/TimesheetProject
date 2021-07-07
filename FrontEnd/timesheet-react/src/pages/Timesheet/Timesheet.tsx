@@ -3,9 +3,9 @@ import { Button, message } from 'antd';
 import { history } from 'umi';
 import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
+import type { ProFormColumnsType } from '@ant-design/pro-form';
 import ProForm, {
   BetaSchemaForm,
-  ProFormColumnsType,
   ProFormSelect,
   ProFormText,
   ProFormUploadButton,
@@ -197,13 +197,143 @@ const data1 = [
   },
 ];
 
+const disabledDayColumns: ProColumns[] = [
+  {
+    title: 'Week Day',
+    dataIndex: 'day',
+    valueType: 'select',
+    width: '15%',
+    editable: (text, record, index) => {
+      return index !== null;
+    },
+    valueEnum: {
+      Monday: {
+        text: 'Monday',
+      },
+      Tuesday: {
+        text: 'Tuesday',
+      },
+      Wednesday: {
+        text: 'Wednesday',
+      },
+      Thursday: {
+        text: 'Thursday',
+      },
+      Friday: {
+        text: 'Friday',
+      },
+      Saturday: {
+        text: 'Saturday',
+      },
+      Sunday: {
+        text: 'Sunday',
+      },
+    },
+  },
+  {
+    title: 'Date',
+    dataIndex: 'date',
+    width: '15%',
+    editable: (text, record, index) => {
+      return index !== null;
+    },
+  },
+  {
+    title: 'Starting Time',
+    dataIndex: 'startTime',
+    width: '15%',
+    editable: (text, record, index) => {
+      return index !== null;
+    },
+    // editable: (text, record, index) => {
+    //   if (record.approvalStatus === 'Approved') {
+    //     return index !== null;
+    //   }
+    //   return index == null;
+    // },
+  },
+  {
+    title: 'Ending Time',
+    dataIndex: 'endTime',
+    width: '15%',
+    editable: (text, record, index) => {
+      return index !== null;
+    },
+  },
+  {
+    title: 'total Hours',
+    dataIndex: 'totalHours',
+    width: '15%',
+    editable: (text, record, index) => {
+      return index !== null;
+    },
+  },
+  {
+    title: 'Floating',
+    dataIndex: 'floating',
+    width: '10%',
+    editable: (text, record, index) => {
+      return index !== null;
+    },
+    // valueType: 'select',
+    // valueEnum: {
+    //   true: {
+    //     text: 'true',
+    //   },
+    //   false: {
+    //     text: 'false',
+    //   },
+    // },
+  },
+  {
+    title: 'Vacation',
+    dataIndex: 'vacation',
+    width: '10%',
+    editable: (text, record, index) => {
+      return index !== null;
+    },
+  },
+  {
+    title: 'Holiday',
+    dataIndex: 'holiday',
+    width: '10%',
+    editable: (text, record, index) => {
+      return index !== null;
+    },
+  },
+];
+
 const dayColumns: ProColumns[] = [
   {
     title: 'Week Day',
     dataIndex: 'day',
+    valueType: 'select',
     width: '15%',
     editable: (text, record, index) => {
-      return index == null;
+      return index !== null;
+    },
+    valueEnum: {
+      Monday: {
+        text: 'Monday',
+      },
+      Tuesday: {
+        text: 'Tuesday',
+      },
+      Wednesday: {
+        text: 'Wednesday',
+      },
+      Thursday: {
+        text: 'Thursday',
+      },
+      Friday: {
+        text: 'Friday',
+      },
+      Saturday: {
+        text: 'Saturday',
+      },
+      Sunday: {
+        text: 'Sunday',
+      },
     },
   },
   {
@@ -218,6 +348,12 @@ const dayColumns: ProColumns[] = [
     title: 'Starting Time',
     dataIndex: 'startTime',
     width: '15%',
+    // editable: (text, record, index) => {
+    //   if (record.approvalStatus === 'Approved') {
+    //     return index !== null;
+    //   }
+    //   return index == null;
+    // },
   },
   {
     title: 'Ending Time',
@@ -233,6 +369,15 @@ const dayColumns: ProColumns[] = [
     title: 'Floating',
     dataIndex: 'floating',
     width: '10%',
+    // valueType: 'select',
+    // valueEnum: {
+    //   true: {
+    //     text: 'true',
+    //   },
+    //   false: {
+    //     text: 'false',
+    //   },
+    // },
   },
   {
     title: 'Vacation',
@@ -245,7 +390,6 @@ const dayColumns: ProColumns[] = [
     width: '10%',
   },
 ];
-
 // Add timesheet configuration
 type DataItem = {
   userId: string;
@@ -254,7 +398,6 @@ type DataItem = {
   weekEnding: string;
   totalBillingHour: string;
   totalCompensatedHour: string;
-
   approvalStatus: string;
   days: [];
 };
@@ -413,24 +556,30 @@ const schemaColumns: ProFormColumnsType<DataItem>[] = [
   },
 ];
 
-function Timesheet() {
+function Timesheet(this: any) {
   const [data, setData] = useState(data1);
   const [weekEnding, setWeekEnding] = useState(data[0].weekEnding);
-  const [dataSource, setDataSource] = useState(() => data[0].days);
-
+  console.log(weekEnding);
+  const [daysData, setDataSource] = useState(() => data[0].days);
+  const [editableColumns, setEditableColumns] = useState(dayColumns);
   // @ts-ignore
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>(() => {
-    return dataSource.map((item) => item.day);
+    return daysData.map((item) => item.day);
   });
   const [weekEndingOptions, setWeekEndingOptions] = useState(() =>
     data.map((item) => item.weekEnding),
   );
 
-  const [curBillingHour, setCurBillingHour] = useState(data[0].totalBillingHour)
+  const [curBillingHour, setCurBillingHour] = useState(data[0].totalBillingHour);
 
   const getDaysByWeekEnding = (val: string) => {
     // @ts-ignore
     return data.find((item) => item.weekEnding === val).days;
+  };
+
+  const getApprovalStatusByWeekEnding = (val: string) => {
+    // @ts-ignore
+    return data.find((item) => item.weekEnding === val).approvalStatus;
   };
 
   const getKeysByWeekEnding = (val: string) => {
@@ -440,54 +589,59 @@ function Timesheet() {
 
   const weekEndingHandleChange = (val: string) => {
     // routing logic here
-    console.log("weekEndingHandleChange " + val)
+    console.log(`weekEndingHandleChange ${val}`);
     history.push(`/timesheet/${val}`);
     setWeekEnding(val);
     setDataSource(getDaysByWeekEnding(val));
     setEditableRowKeys(getKeysByWeekEnding(val));
+    if (getApprovalStatusByWeekEnding(val) === 'Approved') {
+      setEditableColumns(disabledDayColumns);
+    } else {
+      setEditableColumns(dayColumns);
+    }
   };
 
   const saveChangeHandler = () => {
     const curWeek = weekEnding;
 
     const week = data.find((item) => item.weekEnding === curWeek);
-    if (week === undefined) return
+    if (week === undefined) return;
 
     let totalHours = 0;
+    // Calculate total hours
+    daysData.forEach((item) => {
+      const tempStartTimeArr = item.startTime.split(':');
+      const tempEndTimeArr = item.endTime.split(':');
+      if (tempStartTimeArr.length === 2 && tempEndTimeArr.length === 2) {
+        const tempStartHour = parseInt(tempStartTimeArr[0], 10);
+        const tempStartMinute = parseInt(tempStartTimeArr[1], 10);
+        const tempEndHour = parseInt(tempEndTimeArr[0], 10);
+        const tempEndMinute = parseInt(tempEndTimeArr[1], 10);
 
-    dataSource.forEach(data => {
-      let tempStartTimeArr = data.startTime.split(":")
-      let tempEndTimeArr = data.endTime.split(":")
-      if(tempStartTimeArr.length == 2 && tempEndTimeArr.length == 2) {
+        const startTotal = tempStartHour * 60 + tempStartMinute;
+        const endTotal = tempEndHour * 60 + tempEndMinute;
+        const difference = endTotal - startTotal;
 
-        let tempStartHour = parseInt(tempStartTimeArr[0]);
-        let tempStartminute = parseInt(tempStartTimeArr[1]);
-        let tempEndHour = parseInt(tempEndTimeArr[0]);
-        let tempEndMinute = parseInt(tempEndTimeArr[1]);
-
-        let startTotal = tempStartHour * 60 + tempStartminute;
-        let endTotal = tempEndHour * 60 + tempEndMinute;
-        let difference =  endTotal - startTotal;
-        
-        let result = (difference/60).toFixed(1)
-
-        data.totalHours = parseFloat(result)
-
+        const result = (difference / 60).toFixed(1);
+        item.totalHours = parseFloat(result);
       }
-      totalHours += data.totalHours;
-    })
-    week.days = dataSource;
+      totalHours += item.totalHours;
+    });
+    week.days = daysData;
     week.totalBillingHour = totalHours;
 
-    console.log(dataSource)
+    console.log(daysData);
     console.log(week);
-    
+
     axios
       .put('http://localhost:8081/timeSheet/update', week, {
         headers: { 'Access-Control-Allow-Origin': '*' },
       })
       .then((item) => console.log(item))
       .catch((err) => console.log(err));
+
+    message.success('You have successfully submitted your timesheet!');
+    window.location.reload();
   };
 
   const fetchTimeSheetData = async () => {
@@ -499,53 +653,27 @@ function Timesheet() {
       setData(items.data);
       console.log(items.data);
     });
-  }
-
-  
-  const fetchTimeSheetData2 = async (val:string) => {
-    const userId = 1;
-
-    const allSummaryURL = `http://localhost:8081/timeSheet/summary?userId=${userId}`;
-
-    await axios.get(allSummaryURL).then((items) => {
-      setData(items.data);
-      console.log(items.data);
-    });
-
-    weekEndingHandleChange(val);
-  }
-
-  const getCurrentBillingHour = () => {
-    let sum = 0;
-    console.log(dataSource)
-    dataSource.forEach(data => {
-      sum += data.totalHours
-    })
-    return sum;
-  }
+  };
 
   useEffect(() => {
     fetchTimeSheetData();
-  }, []);
+    console.log(data);
+  });
 
   useEffect(() => {
     setWeekEndingOptions(data.map((item) => item.weekEnding));
-  }, [data]);
+    console.log(weekEndingOptions);
+  }, [data, weekEndingOptions]);
 
   useEffect(() => {
     const curWeek = weekEnding;
 
     const week = data.find((item) => item.weekEnding === curWeek);
 
-    if(week !== undefined)
-      setCurBillingHour(week.totalBillingHour)
+    if (week !== undefined) setCurBillingHour(week.totalBillingHour);
 
-    console.log(curBillingHour)
-  },[weekEnding])
-
-  useEffect(() => {
-    console.log(dataSource);
-  }, [weekEnding, dataSource, editableKeys]);
+    console.log(curBillingHour);
+  }, [curBillingHour, data, weekEnding]);
 
   return (
     <PageContainer title="Timesheet Info">
@@ -564,13 +692,17 @@ function Timesheet() {
             // eslint-disable-next-line no-console
             console.log(values);
 
-            await axios
+            axios
               .post('http://localhost:8081/timeSheet/add', values, {
-                headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
+                headers: {
+                  'Access-Control-Allow-Origin': '*',
+                  'Content-Type': 'application/json',
+                },
               })
               .then((item) => console.log(item))
               .catch((err) => console.log(err));
-            await fetchTimeSheetData2(values.weekEnding);
+            message.success('You have successfully submitted your timesheet!');
+            window.location.reload();
           }}
           columns={schemaColumns}
           width={1300}
@@ -584,7 +716,7 @@ function Timesheet() {
       }>
         initialValues={{
           date: Date.now(),
-          totalCompensatedHour: 29,
+          totalCompensatedHour: 40,
         }}
         onFinish={async (values) => {
           await waitTime(2000);
@@ -601,7 +733,7 @@ function Timesheet() {
           };
         }}
       >
-        <ProForm.Group key = {curBillingHour}>
+        <ProForm.Group key={curBillingHour}>
           <ProFormSelect
             width="md"
             options={weekEndingOptions}
@@ -614,7 +746,7 @@ function Timesheet() {
           />
 
           <label>Total Billing Hour: </label>
-          <input disabled value = {curBillingHour} />
+          <input disabled value={curBillingHour} />
 
           <ProFormText
             width="md"
@@ -629,9 +761,9 @@ function Timesheet() {
             headerTitle="Timesheet Hours Detail"
             columns={dayColumns}
             rowKey="day"
-            value={dataSource}
+            value={daysData}
             onChange={setDataSource}
-            recordCreatorProps={false}
+            // recordCreatorProps={false} 添加一行的功能
             toolBarRender={() => {
               return [
                 <Button type="primary" key="save" onClick={() => saveChangeHandler()}>
@@ -655,13 +787,14 @@ function Timesheet() {
         <ProForm.Group>
           <ProFormSelect
             width="md"
+            // initialValue={}
             options={[
               {
-                value: 'unapprovedTimesheet',
+                value: 'not approved',
                 label: 'Unapproved Timesheet',
               },
               {
-                value: 'approvedTimesheet',
+                value: 'Approved',
                 label: 'Approved Timesheet',
               },
             ]}
