@@ -21,8 +21,8 @@ public class Timesheet {
     private String userId;
 
     private String weekEnding;
-    private Integer totalBillingHour;
-    private Integer totalCompensatedHour;
+    private Double totalBillingHour;
+    private Double totalCompensatedHour;
     private String submissionStatus;
     private String approvalStatus;
     private String comment;
