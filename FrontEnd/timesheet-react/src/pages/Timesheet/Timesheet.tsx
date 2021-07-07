@@ -687,7 +687,7 @@ function Timesheet(this: any) {
             // eslint-disable-next-line no-param-reassign
             values.userId = '1';
             // eslint-disable-next-line no-param-reassign
-            values.submissionStatus = 'Completed';
+            values.submissionStatus = 'Incomplete';
             // eslint-disable-next-line no-param-reassign
             values.comment = 'New Comment';
             // eslint-disable-next-line no-param-reassign
@@ -738,6 +738,7 @@ function Timesheet(this: any) {
             .then((item) => console.log(item))
             .catch((err) => console.log(err));
           message.success('You have successfully submitted your timesheet!');
+          window.location.reload();
         }}
         params={{}}
         request={async () => {
