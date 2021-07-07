@@ -1,10 +1,7 @@
 package com.bfs.timesheet.controller;
 
 
-import com.bfs.timesheet.domain.Holidays;
-import com.bfs.timesheet.domain.PTO;
-import com.bfs.timesheet.domain.Template;
-import com.bfs.timesheet.domain.Timesheet;
+import com.bfs.timesheet.domain.*;
 import com.bfs.timesheet.repository.HolidaysDAO;
 import com.bfs.timesheet.repository.PTODAO;
 import com.bfs.timesheet.repository.TemplateDAO;
@@ -61,27 +58,64 @@ public class TimeSheetController {
 
 
     //save new TimeSheet
-    @PostMapping("/add")
-    public ResponseEntity<String> addTimeSheet(@RequestBody Timesheet timesheet) {
+    @PostMapping("/add/{userId}")
+    public ResponseEntity<String> addTimeSheet(@RequestParam String userId, @RequestBody Timesheet timesheet) {
         List<Timesheet> list = timesheetDAO.findAll();
         int size = list.size();
         timesheet.setId(String.valueOf(++size));
+        timesheet.setId(userId);
         timesheetDAO.save(timesheet);
         return ResponseEntity.ok("Successfully Add TimeSheet");
     }
 
     //update TimeSheet
     @PutMapping("/update")
-    public ResponseEntity<String> updateTimeSheet(@RequestBody Timesheet timesheet) {
-        Timesheet updatedTimeSheet = timesheetDAO.findByUserIdAndWeekEnding(timesheet.getUserId(),timesheet.getWeekEnding());
-        updatedTimeSheet.setTotalBillingHour(timesheet.getTotalBillingHour());
-        updatedTimeSheet.setTotalCompensatedHour(timesheet.getTotalCompensatedHour());
+    public ResponseEntity<String> updateTimeSheet(@RequestParam String userId, @RequestBody Timesheet timesheet) {
+        Timesheet updatedTimeSheet = timesheetDAO.findByUserIdAndWeekEnding(userId,timesheet.getWeekEnding());
+
+        timesheetDAO.delete(updatedTimeSheet);
+
+        List<Day> list = updatedTimeSheet.getDays();
+
+//        Double totalHours;
+        Double totalAllBillingHour = 0.0;
+
+        Double totalAllCompensatedHour = 0.0;
+
+        Integer floatingAllLeft = updatedTimeSheet.getFloatingLeft();
+        Integer holidayAllLeft = updatedTimeSheet.getHolidayLeft();
+
+        Integer floatingCount = 0;
+        Integer holidayCount = 0;
+        Integer vacationCount = 0;
+
+        for(Day day : list)
+        {
+            double totalHours = Integer.valueOf(day.getEndTime()) - Integer.valueOf(day.getStartTime());
+            totalAllBillingHour += totalHours;
+            if(day.getFloating().equals("true"))
+                floatingCount++;
+            if(day.getHoliday().equals("true"))
+                holidayCount++;
+            if(day.getVacation().equals("true"))
+                vacationCount++;
+        }
+        floatingAllLeft -= floatingCount;
+        holidayAllLeft -= holidayCount;
+
+        totalAllCompensatedHour = totalAllBillingHour + (floatingCount + holidayCount + vacationCount)*8;
+
+        updatedTimeSheet.setTotalBillingHour(totalAllBillingHour);
+        updatedTimeSheet.setTotalCompensatedHour(totalAllCompensatedHour);
+        updatedTimeSheet.setFloatingLeft(floatingAllLeft);
+        updatedTimeSheet.setHolidayLeft(holidayAllLeft);
+
+
         updatedTimeSheet.setSubmissionStatus(timesheet.getSubmissionStatus());
         updatedTimeSheet.setApprovalStatus(timesheet.getApprovalStatus());
         updatedTimeSheet.setComment(timesheet.getComment());
         updatedTimeSheet.setDays(timesheet.getDays());
-        updatedTimeSheet.setFloatingLeft(timesheet.getFloatingLeft());
-        updatedTimeSheet.setHolidayLeft(timesheet.getHolidayLeft());
+
         timesheetDAO.save(updatedTimeSheet);
 
         return ResponseEntity.ok("Successfully Update TimeSheet");
