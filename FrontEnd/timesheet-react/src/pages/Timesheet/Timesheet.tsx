@@ -559,7 +559,6 @@ const schemaColumns: ProFormColumnsType<DataItem>[] = [
 function Timesheet(this: any) {
   const [data, setData] = useState(data1);
   const [weekEnding, setWeekEnding] = useState(data[0].weekEnding);
-  console.log(weekEnding);
   const [daysData, setDataSource] = useState(() => data[0].days);
   const [editableColumns, setEditableColumns] = useState(dayColumns);
   // @ts-ignore
@@ -658,12 +657,12 @@ function Timesheet(this: any) {
   useEffect(() => {
     fetchTimeSheetData();
     console.log(data);
-  });
+  }, []);
 
   useEffect(() => {
     setWeekEndingOptions(data.map((item) => item.weekEnding));
     console.log(weekEndingOptions);
-  }, [data, weekEndingOptions]);
+  }, [data]);
 
   useEffect(() => {
     const curWeek = weekEnding;
