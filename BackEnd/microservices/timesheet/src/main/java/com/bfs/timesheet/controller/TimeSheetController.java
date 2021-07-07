@@ -53,8 +53,8 @@ public class TimeSheetController {
     }
 
     //a default ‘Week Ending’ of the current ending week
-    @GetMapping("/weekEnding")
-    public ResponseEntity<Timesheet> getOneTimeSheet(@RequestParam String userId, @RequestParam String weekEnding) {
+    @GetMapping("/weekEnding/{weekEnding}")
+    public ResponseEntity<Timesheet> getOneTimeSheet(@RequestParam String userId, @PathVariable String weekEnding) {
         Timesheet timesheet = timesheetDAO.findByUserIdAndWeekEnding(userId, weekEnding);
         return new ResponseEntity(timesheet,HttpStatus.OK);
     }
