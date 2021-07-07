@@ -122,8 +122,9 @@ public class TimeSheetController {
     }
 
     @PutMapping("/updateDefault") //for set default
-    public ResponseEntity<String> updateTemplate(@RequestBody Template template){
-        Template original = templateDAO.findByUserId(template.getUserId());
+    public ResponseEntity<String> updateTemplate(@RequestParam String userId,@RequestBody Template template){
+        Template original = templateDAO.findByUserId(userId);
+        templateDAO.delete(original);
         original.setDays(template.getDays());
         templateDAO.save(original);
         return ResponseEntity.ok("Successfully Update time sheet");
@@ -151,9 +152,10 @@ public class TimeSheetController {
 
 
     @PutMapping("/updatePto")
-    public void updatePTO(@RequestBody PTO pto){
-        PTO original = ptodao.findByUserIdAndYear(pto.getUserId(), pto.getYear());
+    public void updatePTO(@RequestParam String userId,@RequestBody PTO pto){
+        PTO original = ptodao.findByUserIdAndYear(userId, pto.getYear());
         if(original != null){
+            ptodao.delete(original);
             original.setFloatingCount(pto.getFloatingCount());
             original.setVacationCount(pto.getVacationCount());
             ptodao.save(original);
@@ -163,8 +165,8 @@ public class TimeSheetController {
     }
 
     @PostMapping("/updateFloating")
-    public ResponseEntity<String> updateFloating(@RequestBody PTO pto){
-        PTO checkPTO = ptodao.findByUserIdAndYear(pto.getUserId(), pto.getYear());
+    public ResponseEntity<String> updateFloating(@RequestParam String userId,@RequestBody PTO pto){
+        PTO checkPTO = ptodao.findByUserIdAndYear(userId, pto.getYear());
         if(checkPTO != null){
             if(checkPTO.getFloatingCount() > 0){
                 checkPTO.setFloatingCount(checkPTO.getFloatingCount()-1);
@@ -178,21 +180,12 @@ public class TimeSheetController {
 
         }else{
             return new ResponseEntity("You have no PTO",HttpStatus.BAD_REQUEST);
-            //Create a new PTO floating day document for that year
-//            Random random = new Random();
-//            int id = random.nextInt(100);
-//            pto.setId(id);
-//            pto.setUserId(pto.getUserId());
-//            pto.setFloatingCount(2); //use one floating day
-//            pto.setVacationCount(3);
-//            return new ResponseEntity("Take one day off your floating day ",HttpStatus.OK);
-
         }
     }
 
     @PostMapping("/updateVacation")
-    public ResponseEntity<String> updateVacation(@RequestBody PTO pto){
-        PTO checkVacation = ptodao.findByUserIdAndYear(pto.getUserId(), pto.getYear());
+    public ResponseEntity<String> updateVacation(@RequestParam String userId, @RequestBody PTO pto){
+        PTO checkVacation = ptodao.findByUserIdAndYear(userId, pto.getYear());
         if(checkVacation != null){
             if(checkVacation.getVacationCount() > 0){
                 checkVacation.setVacationCount(checkVacation.getVacationCount()- 1);
@@ -208,13 +201,6 @@ public class TimeSheetController {
             return new ResponseEntity("Take one day off your vacation day ",HttpStatus.OK);
 
         }else{
-//            System.out.println("No PTO vacation found");
-//            Random random = new Random();
-//            int id = random.nextInt(100);
-//            pto.setId(id);
-//            pto.setUserId(pto.getUserId());
-//            pto.setFloatingCount(3);
-//            pto.setVacationCount(2);//use one vacation day
             return new ResponseEntity("You have no PTO vacation day",HttpStatus.BAD_REQUEST);
 
         }
