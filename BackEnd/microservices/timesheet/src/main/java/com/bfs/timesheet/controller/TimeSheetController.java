@@ -70,6 +70,7 @@ public class TimeSheetController {
 
     public Timesheet calculateTimesheet(Timesheet timesheet) {
         List<Day> list = timesheet.getDays();
+        if (list == null) { return timesheet; }
         System.out.println(list);
         double totalAllBillingHour = 0.0;
         double totalAllCompensatedHour = 0.0;
@@ -117,7 +118,16 @@ public class TimeSheetController {
         timesheetDAO.delete(updatedTimeSheet);
         updatedTimeSheet = calculateTimesheet(timesheet);
         timesheetDAO.save(updatedTimeSheet);
+        return ResponseEntity.ok("Successfully Update TimeSheet");
+    }
 
+    @PutMapping("/updateApprovalStatus")
+    public ResponseEntity<String> updateTimeSheetApprovalStatus(@RequestBody Timesheet timesheet) {
+        Timesheet updatedTimeSheet = timesheetDAO
+            .findByUserIdAndWeekEnding(timesheet.getUserId(), timesheet.getWeekEnding());
+        timesheetDAO.delete(updatedTimeSheet);
+        updatedTimeSheet.setApprovalStatus(timesheet.getApprovalStatus());
+        timesheetDAO.save(updatedTimeSheet);
         return ResponseEntity.ok("Successfully Update TimeSheet");
     }
 

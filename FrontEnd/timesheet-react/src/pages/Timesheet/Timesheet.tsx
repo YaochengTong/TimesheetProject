@@ -203,9 +203,7 @@ const disabledDayColumns: ProColumns[] = [
     dataIndex: 'day',
     valueType: 'select',
     width: '15%',
-    editable: (text, record, index) => {
-      return index !== null;
-    },
+    editable: false,
     valueEnum: {
       Monday: {
         text: 'Monday',
@@ -234,17 +232,13 @@ const disabledDayColumns: ProColumns[] = [
     title: 'Date',
     dataIndex: 'date',
     width: '15%',
-    editable: (text, record, index) => {
-      return index !== null;
-    },
+    editable: false,
   },
   {
     title: 'Starting Time',
     dataIndex: 'startTime',
     width: '15%',
-    editable: (text, record, index) => {
-      return index !== null;
-    },
+    editable: false,
     // editable: (text, record, index) => {
     //   if (record.approvalStatus === 'Approved') {
     //     return index !== null;
@@ -256,49 +250,57 @@ const disabledDayColumns: ProColumns[] = [
     title: 'Ending Time',
     dataIndex: 'endTime',
     width: '15%',
-    editable: (text, record, index) => {
-      return index !== null;
-    },
+    editable: false,
   },
   {
     title: 'total Hours',
     dataIndex: 'totalHours',
     width: '15%',
-    editable: (text, record, index) => {
-      return index !== null;
-    },
+    editable: false,
   },
   {
     title: 'Floating',
     dataIndex: 'floating',
     width: '10%',
-    editable: (text, record, index) => {
-      return index !== null;
+    editable: false,
+    valueType: 'select',
+    valueEnum: {
+      true: {
+        text: 'true',
+      },
+      false: {
+        text: 'false',
+      },
     },
-    // valueType: 'select',
-    // valueEnum: {
-    //   true: {
-    //     text: 'true',
-    //   },
-    //   false: {
-    //     text: 'false',
-    //   },
-    // },
   },
   {
     title: 'Vacation',
     dataIndex: 'vacation',
     width: '10%',
-    editable: (text, record, index) => {
-      return index !== null;
+    editable: false,
+    valueType: 'select',
+    valueEnum: {
+      true: {
+        text: 'true',
+      },
+      false: {
+        text: 'false',
+      },
     },
   },
   {
     title: 'Holiday',
     dataIndex: 'holiday',
     width: '10%',
-    editable: (text, record, index) => {
-      return index !== null;
+    editable: false,
+    valueType: 'select',
+    valueEnum: {
+      true: {
+        text: 'true',
+      },
+      false: {
+        text: 'false',
+      },
     },
   },
 ];
@@ -688,6 +690,8 @@ function Timesheet(this: any) {
             values.submissionStatus = 'Completed';
             // eslint-disable-next-line no-param-reassign
             values.comment = 'New Comment';
+            // eslint-disable-next-line no-param-reassign
+            values.approvalStatus = 'Not approved';
             // eslint-disable-next-line no-console
             console.log(values);
 
@@ -718,9 +722,21 @@ function Timesheet(this: any) {
           totalCompensatedHour: 40,
         }}
         onFinish={async (values) => {
-          await waitTime(2000);
-          // eslint-disable-next-line no-console
           console.log(values);
+          await waitTime(1000);
+          // @ts-ignore
+          // eslint-disable-next-line no-param-reassign
+          values.userId = '1';
+          // eslint-disable-next-line no-console
+          axios
+            .put('http://localhost:8081/timeSheet/updateApprovalStatus', values, {
+              headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json',
+              },
+            })
+            .then((item) => console.log(item))
+            .catch((err) => console.log(err));
           message.success('You have successfully submitted your timesheet!');
         }}
         params={{}}
@@ -758,7 +774,7 @@ function Timesheet(this: any) {
         <ProForm.Group key={weekEnding}>
           <EditableProTable
             headerTitle="Timesheet Hours Detail"
-            columns={dayColumns}
+            columns={editableColumns}
             rowKey="day"
             value={daysData}
             onChange={setDataSource}
@@ -789,7 +805,7 @@ function Timesheet(this: any) {
             // initialValue={}
             options={[
               {
-                value: 'not approved',
+                value: 'Not approved',
                 label: 'Unapproved Timesheet',
               },
               {
@@ -797,7 +813,7 @@ function Timesheet(this: any) {
                 label: 'Approved Timesheet',
               },
             ]}
-            name="timesheetStatus"
+            name="approvalStatus"
             label="Select your timesheet status"
           />
           <ProFormUploadButton
