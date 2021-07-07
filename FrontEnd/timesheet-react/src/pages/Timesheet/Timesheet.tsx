@@ -426,6 +426,8 @@ function Timesheet() {
     data.map((item) => item.weekEnding),
   );
 
+  const [curBillingHour, setCurBillingHour] = useState(data[0].totalBillingHour)
+
   const getDaysByWeekEnding = (val: string) => {
     // @ts-ignore
     return data.find((item) => item.weekEnding === val).days;
@@ -438,6 +440,7 @@ function Timesheet() {
 
   const weekEndingHandleChange = (val: string) => {
     // routing logic here
+    console.log("weekEndingHandleChange " + val)
     history.push(`/timesheet/${val}`);
     setWeekEnding(val);
     setDataSource(getDaysByWeekEnding(val));
@@ -448,8 +451,37 @@ function Timesheet() {
     const curWeek = weekEnding;
 
     const week = data.find((item) => item.weekEnding === curWeek);
-    if (week !== undefined) week.days = dataSource;
+    if (week === undefined) return
 
+    let totalHours = 0;
+
+    dataSource.forEach(data => {
+      let tempStartTimeArr = data.startTime.split(":")
+      let tempEndTimeArr = data.endTime.split(":")
+      if(tempStartTimeArr.length == 2 && tempEndTimeArr.length == 2) {
+
+        let tempStartHour = parseInt(tempStartTimeArr[0]);
+        let tempStartminute = parseInt(tempStartTimeArr[1]);
+        let tempEndHour = parseInt(tempEndTimeArr[0]);
+        let tempEndMinute = parseInt(tempEndTimeArr[1]);
+
+        let startTotal = tempStartHour * 60 + tempStartminute;
+        let endTotal = tempEndHour * 60 + tempEndMinute;
+        let difference =  endTotal - startTotal;
+        
+        let result = (difference/60).toFixed(1)
+
+        data.totalHours = parseFloat(result)
+
+      }
+      totalHours += data.totalHours;
+    })
+    week.days = dataSource;
+    week.totalBillingHour = totalHours;
+
+    console.log(dataSource)
+    console.log(week);
+    
     axios
       .put('http://localhost:8081/timeSheet/update', week, {
         headers: { 'Access-Control-Allow-Origin': '*' },
@@ -458,20 +490,58 @@ function Timesheet() {
       .catch((err) => console.log(err));
   };
 
-  useEffect(() => {
+  const fetchTimeSheetData = async () => {
     const userId = 1;
 
     const allSummaryURL = `http://localhost:8081/timeSheet/summary?userId=${userId}`;
 
-    axios.get(allSummaryURL).then((item) => {
-      setData(item.data);
-      console.log(item.data);
+    await axios.get(allSummaryURL).then((items) => {
+      setData(items.data);
+      console.log(items.data);
     });
+  }
+
+  
+  const fetchTimeSheetData2 = async (val:string) => {
+    const userId = 1;
+
+    const allSummaryURL = `http://localhost:8081/timeSheet/summary?userId=${userId}`;
+
+    await axios.get(allSummaryURL).then((items) => {
+      setData(items.data);
+      console.log(items.data);
+    });
+
+    weekEndingHandleChange(val);
+  }
+
+  const getCurrentBillingHour = () => {
+    let sum = 0;
+    console.log(dataSource)
+    dataSource.forEach(data => {
+      sum += data.totalHours
+    })
+    return sum;
+  }
+
+  useEffect(() => {
+    fetchTimeSheetData();
   }, []);
 
   useEffect(() => {
     setWeekEndingOptions(data.map((item) => item.weekEnding));
   }, [data]);
+
+  useEffect(() => {
+    const curWeek = weekEnding;
+
+    const week = data.find((item) => item.weekEnding === curWeek);
+
+    if(week !== undefined)
+      setCurBillingHour(week.totalBillingHour)
+
+    console.log(curBillingHour)
+  },[weekEnding])
 
   useEffect(() => {
     console.log(dataSource);
@@ -494,14 +564,13 @@ function Timesheet() {
             // eslint-disable-next-line no-console
             console.log(values);
 
-            axios
+            await axios
               .post('http://localhost:8081/timeSheet/add', values, {
                 headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
               })
               .then((item) => console.log(item))
               .catch((err) => console.log(err));
-
-            weekEndingHandleChange(values.weekEnding);
+            await fetchTimeSheetData2(values.weekEnding);
           }}
           columns={schemaColumns}
           width={1300}
@@ -515,7 +584,6 @@ function Timesheet() {
       }>
         initialValues={{
           date: Date.now(),
-          totalBillingHour: 40,
           totalCompensatedHour: 29,
         }}
         onFinish={async (values) => {
@@ -533,7 +601,7 @@ function Timesheet() {
           };
         }}
       >
-        <ProForm.Group>
+        <ProForm.Group key = {curBillingHour}>
           <ProFormSelect
             width="md"
             options={weekEndingOptions}
@@ -544,7 +612,10 @@ function Timesheet() {
             }}
             placeholder="Select your week Ending"
           />
-          <ProFormText width="md" name="totalBillingHour" disabled label="Total Billing Hours" />
+
+          <label>Total Billing Hour: </label>
+          <input disabled value = {curBillingHour} />
+
           <ProFormText
             width="md"
             name="totalCompensatedHour"
