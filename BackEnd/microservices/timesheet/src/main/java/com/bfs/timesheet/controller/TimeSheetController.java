@@ -83,7 +83,9 @@ public class TimeSheetController {
                 day.setTotalHours((double) 0);
                 continue;
             }
-            double totalHours = Integer.parseInt(day.getEndTime()) - Integer.parseInt(day.getStartTime());
+            String[] endTimeSplit = day.getEndTime().split(":");
+            String[] startTimeSplit = day.getStartTime().split(":");
+            double totalHours = Integer.parseInt(endTimeSplit[0]) - Integer.parseInt(startTimeSplit[0]);
             totalAllBillingHour += totalHours;
             if (day.getFloating()) { floatingCount++; }
             if (day.getHoliday()) { holidayCount++; }
