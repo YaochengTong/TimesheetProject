@@ -63,6 +63,9 @@ public class TimeSheetController {
     //save new TimeSheet
     @PostMapping("/add")
     public ResponseEntity<String> addTimeSheet(@RequestBody Timesheet timesheet) {
+        List<Timesheet> list = timesheetDAO.findAll();
+        int size = list.size();
+        timesheet.setId(String.valueOf(++size));
         timesheetDAO.save(timesheet);
         return ResponseEntity.ok("Successfully Add TimeSheet");
     }
