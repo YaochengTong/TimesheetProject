@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/demo")
 public class ExampleController {
@@ -42,6 +44,13 @@ public class ExampleController {
     @PostMapping("/mongoUserTest")
     public ResponseEntity<User> testUser(@RequestBody User user) {
 
+        if(userDAO.findByEmail(user.getEmail()) != null){
+            return new ResponseEntity("The email has been registered",HttpStatus.BAD_REQUEST);
+        }
+
+        List<User> list = userDAO.findAll();
+        int size = list.size();
+        user.setId(String.valueOf(++size));
         User user1= userDAO.save(user);
         return new ResponseEntity(user1, HttpStatus.CREATED);
     }

@@ -3,4 +3,4 @@ spring:
     name: auth-server
 
 server:
-  port: 9001
+  port: 5000

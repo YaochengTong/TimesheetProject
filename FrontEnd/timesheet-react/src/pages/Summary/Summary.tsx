@@ -121,6 +121,7 @@ class Summary extends Component {
   }
 
   render() {
+
     return (
       <div>
         Hello

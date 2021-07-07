@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
+    <option name="BUILD_PROCESS_ADDITIONAL_VM_OPTIONS" value="-Djps.track.ap.dependencies=false" />
     <annotationProcessing>
       <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
@@ -9,13 +10,13 @@
         <outputRelativeToContentRoot value="true" />
         <module name="summary" />
         <module name="timesheet" />
-        <module name="service-discovery" />
         <module name="gateway" />
+        <module name="service-discovery" />
         <module name="contact" />
         <module name="auth-server" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="8">
+    <bytecodeTargetLevel>
       <module name="auth-server" target="1.8" />
       <module name="contact" target="1.8" />
       <module name="gateway" target="1.8" />

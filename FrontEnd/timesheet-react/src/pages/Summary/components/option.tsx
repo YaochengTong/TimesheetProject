@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { Button } from 'antd';
 import { history } from 'umi';
 
 class Option extends Component {
-  constructor(props) {
+  constructor(props: any) {
     super(props);
     this.state = {
       submissionStatus: props.submissionStatus,

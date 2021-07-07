@@ -24,9 +24,15 @@ public class PersonalContact {
     private String userId;
     private String number;
     private String email;
-    private String addressId;
+    //    private String addressId;
+//    private String emergencyContactId;
+    private String homeAddress;
+
+    private String name1;
+    private String number1;
+
+    private String name2;
+    private String number2;
 
 
-
-    private String emergencyContactId;
 }
